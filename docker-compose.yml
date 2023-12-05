@@ -18,10 +18,29 @@ services:
       ports:
         - 5432:5432
 
-    backend-service:
+    backend-django-service:
       depends_on:
         - database-service
       container_name: django-container
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+        - ..:/project:cached
+        - logs:/var/log
+      env_file:
+        - .env
+      restart:
+        unless-stopped
+      command:
+        sleep infinity
+      networks:
+        - developer
+    
+    backend-fastapi-service:
+      depends_on:
+        - database-service
+      container_name: fastapi-container
       build:
         context: .
         dockerfile: Dockerfile
